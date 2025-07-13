@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
 growpart /dev/nvme0n1 4
 lvextend -l +50%FREE /dev/RootVG/rootVol
 lvextend -l +50%FREE /dev/RootVG/varVol
@@ -37,29 +40,34 @@ sudo usermod -aG docker ec2-user
 
 echo "Docker installation completed successfully!"
 
-# set -e  # Exit immediately if a command exits with a non-zero status
+# Install kubectl
+:'
+# Step 1: Download kubectl
+echo "Downloading kubectl..."
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
 
-# echo "Installing Docker on RHEL-based system..."
+# Step 2: Change permissions
+echo "Granting execute permissions to kubectl..."
+chmod +x ./kubectl
 
-# # Step 1: Install required plugins
-# echo "Installing dnf plugins..."
-# sudo dnf -y install dnf-plugins-core
+# Step 3: Move kubectl to ust/local/bin
+echo "move kubectl to /usr/local/bin/kubectl..."
+mv kubectl /usr/local/bin/kubectl
 
-# # Step 2: Add Docker repository
-# echo "Adding Docker repository..."
-# sudo dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
 
-# # Step 3: Install Docker and dependencies
-# echo "Installing Docker packages..."
-# sudo dnf -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Install eksctl
 
-# # Step 4: Enable and start Docker service
-# echo "Enabling and starting Docker service..."
-# sudo systemctl start docker
-# sudo systemctl enable docker
+# for ARM systems, set ARCH to: `arm64`, `armv6` or `armv7`
 
-# # Step 5: Change user to current user
+# Step 4: Download eksctl
+echo "Downloading eksctl..."
+curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_$PLATFORM.tar.gz"
 
-# sudo usermod -aG docker ec2-user
+# Step 5: untar the downloaded file
+echo "untar eksctl..."
+tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
 
-# echo "Docker installation complete!"
+# Step 6: Move eksctl to /usr/local/bin
+echo "move eksctl to /usr/local/bin..."
+mv /tmp/eksctl /usr/local/bin
+'
