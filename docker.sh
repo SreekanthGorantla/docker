@@ -41,7 +41,7 @@ sudo usermod -aG docker ec2-user
 echo "Docker installation completed successfully!"
 
 # Install kubectl
-:'
+
 # Step 1: Download kubectl
 echo "Downloading kubectl..."
 curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.33.0/2025-05-01/bin/linux/amd64/kubectl
@@ -54,6 +54,7 @@ chmod +x ./kubectl
 echo "move kubectl to /usr/local/bin/kubectl..."
 mv kubectl /usr/local/bin/kubectl
 
+echo "kubectl installation completed successfully!"
 
 # Install eksctl
 
@@ -70,4 +71,5 @@ tar -xzf eksctl_$PLATFORM.tar.gz -C /tmp && rm eksctl_$PLATFORM.tar.gz
 # Step 6: Move eksctl to /usr/local/bin
 echo "move eksctl to /usr/local/bin..."
 mv /tmp/eksctl /usr/local/bin
-'
+
+echo "eksctl installation completed successfully!"
